@@ -1,93 +1,36 @@
 apiVersion: apps/v1
-
 kind: Deployment
-
 metadata:
-
-  name: go-todo-deployment
-
+  name: golangtodolist
   labels:
-
-    app: todo
-
+    app: api
 spec:
-
   replicas: 2
-
   selector:
-
     matchLabels:
-
-      app: todo
-
+      app: api
   template:
-
     metadata:
-
       labels:
-
-        app: todo
-
+        app: api
     spec:
-
       containers:
-
-      - name: golangtodolist
-
-        image: nginx:1.14.2
-
+      - name: gotodo
+        image: adrame98/golangtodolist:v1.0.1
         ports:
-
-        - containerPort: 9090
-          name: http-web-svc
-
----
+        - containerPort: 80
 
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: todo-service
+  name: go-service
 spec:
+  type: ClusterIP
   selector:
-    app.kubernetes.io/name: go-todo-deployment
+    app: api
   ports:
-  - name: todo-port
+  - name: go-service
     protocol: TCP
-    port: 9090
-    targetPort: http-web-svc
-  type: nodeport
-
----
-
-apiVersion: networking.k8s.io/v1
-
-kind: Ingress
-
-metadata:
-
-  name: todo-ingress
-
-spec:
-
-  ingressClassName: go-todo-deployment
-
-  rules:
-    - host: go-todo-app.com
-      http:
-
-      paths:
-
-      - path: /
-
-        pathType: Prefix
-
-        backend:
-
-          service:
-
-            name: test
-
-            port:
-
-              number: 9090
+    port: 80
+    targetPort: 80

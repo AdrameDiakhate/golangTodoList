@@ -11,6 +11,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type IUser interface {
+	CreateUser(c *gin.Context)
+	Login(c *gin.Context)
+	GetAllUsers(c *gin.Context)
+	GetOneUser(c *gin.Context)
+	SayHello(c *gin.Context)
+}
+
+type UserController struct {
+	userService services.IService
+}
+
 //Hash the password
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
@@ -18,7 +30,7 @@ func HashPassword(password string) (string, error) {
 }
 
 //Create a new user
-func CreateUser(c *gin.Context) {
+func (u UserController) CreateUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -32,7 +44,7 @@ func CreateUser(c *gin.Context) {
 	}
 	user.Password = string(hash)
 	user.ID = uuid.New().String()
-	createdUser, error := services.CreateUser(user)
+	createdUser, error := u.userService.CreateUser(user)
 	if error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": error.Error()})
 		c.Abort()
@@ -41,13 +53,13 @@ func CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"userId": createdUser.ID, "roleId": createdUser.RoleID, "email": createdUser.Email, "username": createdUser.Username})
 }
 
-func Login(c *gin.Context) {
+func (u UserController) Login(c *gin.Context) {
 	var authInfos utils.AuthInfos
 	if err := c.ShouldBindJSON(&authInfos); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	userFound, err := services.VerifyEmail(authInfos.Email)
+	userFound, err := u.userService.VerifyEmail(authInfos.Email)
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
@@ -60,18 +72,31 @@ func Login(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	tokenString, err := utils.GenerateJWT(userFound.Email, userFound.Username, userFound.Role.RoleName)
+	tokenString, refreshToken, err := utils.GenerateJWT(userFound.Email, userFound.Username, userFound.Role.RoleName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+	c.JSON(http.StatusOK, gin.H{"token": tokenString, "refreshToken": refreshToken})
 }
 
+// //Refresh token
+// func RefreshToken(c gin.Context) (string, string, error) {
+// 	type Refresh struct {
+// 		Refresh string `json:"refresh"`
+// 	}
+// 	var refresh Refresh
+// 	err := c.ShouldBind(&refresh)
+// 	if err != nil {
+// 		c.Errors.JSON()
+// 	}
+// 	return
+// }
+
 //Get all users
-func GetAllUsers(c *gin.Context) {
-	users, error := services.GetAllUsers()
+func (u UserController) GetAllUsers(c *gin.Context) {
+	users, error := u.userService.GetAllUsers()
 	if error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error()})
 		c.Abort()
@@ -84,13 +109,13 @@ func GetAllUsers(c *gin.Context) {
 
 //Get one user
 
-func GetOneUser(c *gin.Context) {
+func (u UserController) GetOneUser(c *gin.Context) {
 	IDUser := c.MustGet("ID").(string)
 	//c.Params.ByName("ID")
 
 	//c.MustGet("ID").(string)
 
-	user, error := services.GetOneUser(IDUser)
+	user, error := u.userService.GetOneUser(IDUser)
 	if error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error()})
 		c.Abort()
@@ -107,4 +132,11 @@ func UpdateUser() {
 }
 func DeleteUser() {
 
+}
+
+func (u UserController) SayHello(c *gin.Context) {
+
+	c.JSON(200, gin.H{
+		"message": "Hello Adramé Diakhaté",
+	})
 }
