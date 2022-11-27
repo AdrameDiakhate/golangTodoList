@@ -137,6 +137,6 @@ func DeleteUser() {
 func (u UserController) SayHello(c *gin.Context) {
 
 	c.JSON(200, gin.H{
-		"message": "Hello Adramé Diakhaté",
+		"message": "Hello Adramé Diakhaté DevOps",
 	})
 }
