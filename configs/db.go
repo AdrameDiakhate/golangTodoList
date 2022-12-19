@@ -29,12 +29,7 @@ func DBConnection() (db *gorm.DB) {
 	}
 	fmt.Println("Succesfully connected ")
 
-	db.AutoMigrate(&models.Role{})
 	db.AutoMigrate(&models.Task{})
-	db.AutoMigrate(&models.User{})
-
-	//db.Create(&models.Role{RoleName: "admin"})
-	//db.Create(&models.Role{RoleName: "user_simple"})
 
 	return db
 }
