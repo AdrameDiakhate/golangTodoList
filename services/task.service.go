@@ -10,8 +10,8 @@ import (
 type ITaskService interface {
 	CreateTask(models.Task) (models.Task, error)
 	GetAllTask() ([]models.Task, error)
-	GetOneTask() (models.Task, error)
-	UpdateTask(string) (models.Task, error)
+	GetOneTask(string) (models.Task, error)
+	UpdateTask(string, models.Task) (models.Task, error)
 	DeleteTask(string) (models.Task, error)
 }
 
@@ -23,25 +23,50 @@ func NewTaskService(db *gorm.DB) ITaskService {
 	return TaskService{db: db}
 }
 
-func (t TaskService) CreateTask(task models.Task) (taskCreated models.Task, err error) {
+//Create a task
 
-	return taskCreated, err
+func (t TaskService) CreateTask(task models.Task) (models.Task, error) {
+
+	result := t.db.Create(&task)
+	return task, result.Error
+
 }
 
-func (t TaskService) GetAllTask() (tasks []models.Task, err error) {
+//Get all tasks
 
-	result := t.db.Find(&models.Task{})
-	return tasks, result.Error
+func (t TaskService) GetAllTask() ([]models.Task, error) {
+
+	var tasks []models.Task
+	err := t.db.Find(&tasks).Error
+	return tasks, err
+
 }
 
-func (t TaskService) GetOneTask() (task models.Task, err error) {
+//Get a single task
+
+func (t TaskService) GetOneTask(id string) (models.Task, error) {
+
+	var task models.Task
+	err := t.db.Where("id= ?", id).First(&task).Error
 	return task, err
+
 }
 
-func (t TaskService) UpdateTask(string) (task models.Task, err error) {
-	return task, err
+//Update a task
+
+func (t TaskService) UpdateTask(id string, task models.Task) (models.Task, error) {
+
+	result := t.db.Where("id =?", id).Updates(&task)
+	return task, result.Error
+
 }
 
-func (t TaskService) DeleteTask(string) (task models.Task, err error) {
-	return task, err
+//Delete a task
+
+func (t TaskService) DeleteTask(id string) (models.Task, error) {
+
+	var task models.Task
+	result := t.db.Where("id = ?", id).Delete(&models.Task{})
+	return task, result.Error
+
 }

@@ -29,89 +29,111 @@ func NewTaskController(taskService services.ITaskService) ITaskController {
 func (t TaskController) CreateTask(c *gin.Context) {
 	task := models.Task{}
 
-	err := c.ShouldBindJSON(&task)
+	if err := c.ShouldBindJSON(&task); err != nil {
+		c.JSON(201, gin.H{
+			"message": " Il y a une erreur!",
+			"data":    err,
+		})
+	}
+
+	CreatedTask, err := t.service.CreateTask(task)
 
 	if err != nil {
-		CreatedTask, err := t.service.CreateTask(task)
-		if err != nil {
-			c.JSON(201, gin.H{
-				"message": "Task successfully created !",
-				"data":    CreatedTask,
-			})
-		}
+		c.JSON(500, gin.H{
+			"message": "Il y a une erreur!",
+			"data":    err,
+		})
+	} else {
+
+		c.JSON(201, gin.H{
+			"message": "Task successfully created !",
+			"data":    CreatedTask,
+		})
 	}
-	return
 }
 
 //Get all tasks
+
 func (t TaskController) GetAllTask(c *gin.Context) {
 	tasks, err := t.service.GetAllTask()
+
 	if err != nil {
-		c.JSON(200, gin.H{
-			"message": "Task successfully created !",
-			"data":    tasks,
+		c.JSON(500, gin.H{
+			"message": "Il y a une erreur!",
+			"data":    err,
 		})
 	}
 
 	c.JSON(200, gin.H{
-		"message": "Task successfully created !",
+		"message": "All tasks !",
 		"data":    tasks,
 	})
-
-	// registers, err := r.Service.GetAllRegisters()
-	// if err != nil {
-	// 	setHttpResponse(c, http.StatusInternalServerError, failureResponse, nil, err)
-	// 	return
-	// }
-	// setHttpResponse(c, http.StatusOK, successResponse, registers, err)
 }
+
+//Get a single task
 
 func (t TaskController) GetOneTask(c *gin.Context) {
-	var task models.Task
+	id := c.Params.ByName("id")
 
-	err := c.ShouldBindJSON(&task)
+	task, err := t.service.GetOneTask(id)
 
 	if err != nil {
-		CreatedTask, err := t.service.CreateTask(task)
-		if err != nil {
-			c.JSON(201, gin.H{
-				"message": "Task successfully created !",
-				"data":    CreatedTask,
-			})
-		}
+		c.JSON(500, gin.H{
+			"message": "Il y a une erreur!",
+			"data":    err,
+		})
 	}
-	return
+
+	c.JSON(200, gin.H{
+		"message": "Single task!",
+		"data":    task,
+	})
 }
+
+//Update a task
+
 func (t TaskController) UpdateTask(c *gin.Context) {
 	var task models.Task
 
-	err := c.ShouldBindJSON(&task)
+	if err := c.ShouldBindJSON(&task); err != nil {
+		c.JSON(500, gin.H{
+			"message": " Il y a une erreur!",
+			"data":    err,
+		})
+	}
+	id := c.Params.ByName("id")
+
+	updatedTask, err := t.service.UpdateTask(id, task)
 
 	if err != nil {
-		CreatedTask, err := t.service.CreateTask(task)
-		if err != nil {
-			c.JSON(201, gin.H{
-				"message": "Task successfully created !",
-				"data":    CreatedTask,
-			})
-		}
+		c.JSON(500, gin.H{
+			"message": "Erreur!",
+			"data":    err,
+		})
 	}
-	return
+
+	c.JSON(201, gin.H{
+		"message": "Task successfully updated !",
+		"data":    updatedTask,
+	})
 }
 
-func (t TaskController) DeleteTask(c *gin.Context) {
-	var task models.Task
+//Delete a task
 
-	err := c.ShouldBindJSON(&task)
+func (t TaskController) DeleteTask(c *gin.Context) {
+	id := c.Params.ByName("id")
+
+	deletedTask, err := t.service.DeleteTask(id)
 
 	if err != nil {
-		CreatedTask, err := t.service.CreateTask(task)
-		if err != nil {
-			c.JSON(201, gin.H{
-				"message": "Task successfully created !",
-				"data":    CreatedTask,
-			})
-		}
+		c.JSON(500, gin.H{
+			"message": "Il y a une erreur!",
+			"data":    err,
+		})
+	} else {
+		c.JSON(201, gin.H{
+			"message": "Task successfully deleted !",
+			"data":    deletedTask,
+		})
 	}
-	return
 }

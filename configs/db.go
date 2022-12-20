@@ -27,9 +27,21 @@ func DBConnection() (db *gorm.DB) {
 	if error != nil {
 		panic(err.Error())
 	}
+	status := db.Find(&models.Status{})
 	fmt.Println("Succesfully connected ")
 
+	db.AutoMigrate(&models.Status{})
 	db.AutoMigrate(&models.Task{})
 
+	if status.RowsAffected == 0 {
+
+		todo := models.Status{Status: "To do"}
+		in_progress := models.Status{Status: "In progress"}
+		done := models.Status{Status: "Done"}
+
+		db.Create(&todo)
+		db.Create(&in_progress)
+		db.Create(&done)
+	}
 	return db
 }
