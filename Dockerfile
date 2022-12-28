@@ -8,8 +8,6 @@ RUN go mod tidy
 
 COPY . ./
 
-COPY configs/.env .
-
 RUN go build -o golangtodolist 
 
 EXPOSE 9091
