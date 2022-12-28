@@ -5,16 +5,22 @@ Ceci est un petit projet de Todo List écrit avec golang.
 Pour l'utiliser, il faut:
 
 A)Avec docker
+
 1)Cloner le projet
 
 2)Lancer le projet golang et mysql ensemble en faisant: 
 
   docker-compose up --build
   
-3) Voir le container et son état:
+3) Voir les containers et son état:
 
   docker ps
+
 4)Aller dans postman pour tester les endpoints ou utiliser curl 😊
+
+5)Arréter les containers
+
+  docker compose down
 
 B) Sans docker
 
