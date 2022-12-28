@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  golangtodolist:
+    build: .
+    ports: 
+      - 9091:9091
+    volumes:
+      - api:/usr/src/app/
+    expose:
+      - 9091
+    environment: 
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_HOST=${DB_HOST} 
+    restart: on-failure
+    depends_on:
+      - mysql-db
+    networks:
+      - todonetwork
+
+  mysql-db:
+    image: mysql
+    ports: 
+      - 3307:3307
+    expose:
+      - 3307
+    environment: 
+      - MYSQL_HOST=${DB_HOST} 
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+
+    volumes:
+      - db-data:/etc/data
+    restart: on-failure
+    networks:
+      - todonetwork
+
+
+volumes:
+  api:
+  db-data:
+
+networks:
+  todonetwork:
+    name: todonetwork
+    driver: bridge

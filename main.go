@@ -12,6 +12,6 @@ func main() {
 	r := gin.New()
 	routes.InitRouting(r)
 	configs.DBConnection()
-
-	r.Run("localhost:" + os.Getenv("APP_PORT"))
+	APP_PORT := os.Getenv("APP_PORT")
+	r.Run("0.0.0.0:" + APP_PORT)
 }
