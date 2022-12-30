@@ -8,7 +8,9 @@ A)Avec docker
 
 1)Cloner le projet
 
-2)Lancer le projet golang et mysql ensemble en faisant: 
+2)Configurez les variables d'environnement en renommant le .env.example en .env et remplissez-le avec vos informations.
+
+3)Lancer le projet golang et mysql ensemble en faisant: 
 
   docker-compose up --build
   
