@@ -10,7 +10,7 @@ A)Avec docker
 
 2)Créer un fichier .env à la racine du projet
 
-3)Copier les informations dans .env.example dans le fichier .env que vous venez de créer et modifier-les avec vos propres informations.
+3)Copier les informations du fichier .env.example dans le fichier .env que vous venez de créer et modifier-les avec vos propres informations.
 
 4)Lancer le projet golang et mysql ensemble en faisant: 
 
@@ -32,7 +32,7 @@ B) Sans docker
 
 2)Créer un fichier .env à la racine du projet
 
-3)Copier les informations dans .env.example dans le fichier .env que vous venez de créer et modifier-les avec vos propres informations. (DB_HOST=127.0.0.1)
+3)Copier les informations du fichier .env.example dans le fichier .env que vous venez de créer et modifier-les avec vos propres informations. (DB_HOST=127.0.0.1)
 
 4)Installer les dépendances en exécutant dans votre terminal :
 
