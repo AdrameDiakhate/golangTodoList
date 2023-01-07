@@ -42,3 +42,26 @@ B) Sans docker
 
     go run .
 
+C) Avec kubernetes ( minikube )
+
+1) Installer minikube :  https://kubernetes.io/docs/tasks/tools/install-minikube/
+
+2) Démarrer un cluster Kubernetes local sur votre ordinateur avec la commande: minikube start
+
+3) Créer un namespace: kubectl create ns nom-du-namespace (dans mon cas le namespace s'appelle todolist-golang-mysql)
+
+4) Créer les différents objets du manifest en lançant la commande: kubectl apply -f statefulset.yml -n nom-du-namespace 
+
+5)Afficher tout ce qui vient d'être créer: kubectl get all -n nom-du-namespace
+
+6) Afficher les pods et voir leurs états: kubectl get pod -n nom-du-namespace
+
+7) Voyer votre api en action en lançant la commande: minikube service -n nom-du-namespace golang-service
+
+Puis cliquer sur l'url généré.
+
+
+NB: Pour les secrets, c'est en base 64. Pour changer les informations de connexion à la bdd, vous pouvez procéder comme suit:
+
+Entrer dans votre terminal et taper par exemple: echo root | base64 
+

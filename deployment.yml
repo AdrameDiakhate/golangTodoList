@@ -5,19 +5,16 @@ kind: Secret
 metadata:
   name: mysecret
 type: Opaque
-stringData: # We dont need to worry about converting to base64
-  # MYSQL_USER: root
-  MYSQL_PASSWORD: ada
-  MYSQL_DATABASE: golangTodoList
-  MYSQL_ROOT_PASSWORD: ada
+data: 
+  MYSQL_PASSWORD: YWRhCg==
+  MYSQL_DATABASE: Z29sYW5nVG9kb0xpc3QK
+  MYSQL_ROOT_PASSWORD: YWRhCg==
 
-  DB_HOST: mysql-service
-  DB_DRIVER: mysql
-  # API_SECRET: 98hbun98h
-  # DB_USER: root
-  DB_PASSWORD: ada
-  DB_NAME: golangTodoList
-  DB_PORT: "3306"
+  DB_HOST: bXlzcWwtc2VydmljZQo=
+  DB_DRIVER: bXlzcWwK
+  DB_PASSWORD: YWRhCg==
+  DB_NAME: Z29sYW5nVG9kb0xpc3QK
+  DB_PORT: MzMwNgo=
 
 ---
 # Service for mysql
@@ -59,7 +56,7 @@ spec:
       containers:
         - name: mysql
           image: mysql:5.6
-          envFrom: # Get the environmental variables from a secret file whose name is "postgres-secret"
+          envFrom: 
             - secretRef:
                 name: mysecret
           ports:
@@ -82,17 +79,17 @@ spec:
 
 ---
 
-apiVersion: v1                           # API version
-kind: Service                            # Type of kubernetes resource 
+apiVersion: v1   
+kind: Service   
 metadata:
-  name: golang-service                # Name of the resource
-  labels:                                # Labels that will be applied to the resource
+  name: golang-service 
+  labels:                
     app: golangtodolist
 spec:
   type: NodePort
   ports:
     - port: 9091
-  selector:                              # Selects any Pod with labels `app=fullstack-mysql,tier=mysql`
+  selector:        
     app: golangtodolist
     tier: go
 
@@ -125,7 +122,7 @@ spec:
       containers:
         - name: golangtodolist
           image: adrame98/golangtodolist:v1.1.6
-          envFrom: # Get the environmental variables from a secret file whose name is "postgres-secret"
+          envFrom:
             - secretRef:
                 name: mysecret
           ports:
