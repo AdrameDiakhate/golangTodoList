@@ -12,16 +12,20 @@ import (
 )
 
 func DBConnection() (db *gorm.DB) {
-	err := godotenv.Load("./configs/.env")
+	err := godotenv.Load()
+	// "./configs/.env"
 	if err != nil {
 		log.Fatal("Error loading .env file" + err.Error())
 		os.Exit(1)
 	}
 	DB_NAME := os.Getenv("DB_NAME")
-	DB_USERNAME := os.Getenv("DB_USERNAME")
+	DB_USER := os.Getenv("DB_USERNAME")
 	DB_PASSWORD := os.Getenv("DB_PASSWORD")
 	DB_HOST := os.Getenv("DB_HOST")
-	dsn := DB_USERNAME + ":" + DB_PASSWORD + "@tcp(" + DB_HOST + ")" + "/" + DB_NAME + "?charset=utf8mb4&parseTime=True&loc=Local"
+	DB_PORT := os.Getenv("DB_PORT")
+
+	// dsn := DB_USERNAME + ":" + DB_PASSWORD + "@tcp(" + DB_HOST + ")" + "/" + DB_NAME + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := DB_USER + ":" + DB_PASSWORD + "@tcp(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?parseTime=true"
 
 	db, error := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if error != nil {
